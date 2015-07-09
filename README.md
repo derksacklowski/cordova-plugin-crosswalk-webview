@@ -1,83 +1,35 @@
-# cordova-plugin-crosswalk-webview
-
-Makes your Cordova application use the [Crosswalk WebView](https://crosswalk-project.org/)
-instead of the System WebView. Requires cordova-android 4.0 or greater.
-
-### Benefits
-
-* WebView doesn't change depending on Android version
-* Capabilities: such as WebRTC, WebAudio, Web Components
-* Performance improvements (compared to older system webviews)
 
 
-### Drawbacks
+Apache Cordova Crosswalk Engine Proof-of-Concept
+===
 
-* Increased memory footprint
-  * An overhead of ~30MB (as reported by the RSS column of ps)
-* Increased APK size (about 17MB)
-* Increased size on disk when installed (about 50MB)
-* Crosswalk WebView stores data (IndexedDB, LocalStorage, etc) separately from System WebView
-  * You'll need to manually migrate local data when switching between the two
+Cordova Crosswalk Engine is a part of a Proof-of-Concept for 
+third party engines to work with Apache Cordova.  This currently only works with the
+4.0.x branch of Apache Cordova found on GitHub, and as of yet, does not work with any
+official Apache Cordova release.  This code should still be considered experimental.
 
-### Install
 
-The following directions are for cordova-cli (most people).  Alternatively you can use the [Android platform scripts workflow](PlatformScriptsWorkflow.md).
+Directions (We're still trying to automate more of this, sorry):
 
-* Open an existing cordova project, with cordova-android 4.0.0+, and using the latest CLI.
-* Add this plugin
+Android-only:
 
-```
-$ cordova plugin add cordova-plugin-crosswalk-webview
-```
+1. Pull down the `4.0.x` branch of [Apache Cordova](https://github.com/apache/cordova-android) found here (https://github.com/apache/cordova-android/tree/4.0.x)
+2. Clone this repository.
+3. Run `sh fetch_libs.sh` to download the Crosswalk library
+4. Generate a project with `./bin/create`
+5. Run Plugman: `plugman install --platform android --plugin <path_to_crosswalk_engine>/cordova-crosswalk-engine/ --project .`
+6. Add the `libs/xwalk_core_library` as a dependency in `project.properties`. (Note: Relative Paths work for libraries, not absolute paths.  Manually edit if necessary.)
 
-* Build
-```
-$ cordova build android
-```
-The build script will automatically fetch the Crosswalk WebView libraries from Crosswalk project download site (https://download.01.org/crosswalk/releases/crosswalk/android/maven2/) and build for both X86 and ARM architectures.
+Cordova CLI:
 
-For example, building android with Crosswalk generates:
+1. Install the latest version of the Cordova CLI from npm (Requires at least 3.5.0-0.2.6)
+2. Pull down the `4.0.x` branch of [Apache Cordova](https://github.com/apache/cordova-android) found here (https://github.com/apache/cordova-android/tree/4.0.x)
+3. Clone this repository.
+4. Run `sh fetch_libs.sh` to download the Crosswalk library
+5. Create a project with `cordova create`
+6. Add the Android platform with `cordova platform add <path to cordova-android>`
+7. Add the Crosswalk Engine plugin with `cordova plugin add <path to crosswalk-engine-plugin>`
 
-```
-/path/to/hello/platforms/android/build/outputs/apk/hello-x86-debug.apk
-/path/to/hello/platforms/android/build/outputs/apk/hello-armv7-debug.apk
-```
+Requirements:
 
-Note that it is also possible to publish a multi-APK application on the Play Store that uses Crosswalk for Pre-L devices, and the (updatable) system webview for L+:
-
-To build Crosswalk-enabled apks, add this plugin and run:
-
-    $ cordova build --release
-
-To build System-webview apk, remove this plugin and run:
-
-    $ cordova build --release -- --minSdkVersion=21
-
-### Configure
-
-You can try out a different Crosswalk version using a `<preference>` tag within your `config.xml`. Some examples:
-
-    <!-- These are all equivalent -->
-    <preference name="xwalkVersion" value="org.xwalk:xwalk_core_library_beta:13+" />
-    <preference name="xwalkVersion" value="xwalk_core_library_beta:13+" />
-    <preference name="xwalkVersion" value="13+" />
-    <preference name="xwalkVersion" value="13" />
-
-You can set [command-line flags](http://peter.sh/experiments/chromium-command-line-switches/) as well:
-
-    <!-- This is the default -->
-    <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
-
-### Release Notes
-
-#### 1.2.0 (April 22, 2015)
-* Made Crosswalk command-line configurable via `<preference name="xwalkCommandLine" value="..." />`
-* Disabled pull-down-to-refresh by default
-
-#### 1.1.0 (April 21, 2015)
-* Based on Crosswalk v13
-* Made Crosswalk version configurable via `<preference name="xwalkVersion" value="..." />`
-
-#### 1.0.0 (Mar 25, 2015)
-* Initial release
-* Based on Crosswalk v11
+`fetch_libs.sh` requires `curl` and `unzip` to be installed, and on the current `PATH`.
